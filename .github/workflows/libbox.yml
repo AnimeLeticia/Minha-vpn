@@ -1,0 +1,26 @@
+name: Build libbox
+on: workflow_dispatch
+jobs:
+  libbox:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: SagerNet/sing-box
+          ref: v1.13.13
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Preparar PATH do Go
+        run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+      - run: make lib_install
+      - run: make lib_android
+      - run: ls -la
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libbox
+          path: libbox*.aar
