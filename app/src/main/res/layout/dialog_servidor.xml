@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <EditText
+        android:id="@+id/edtNome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nome do servidor"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/edtEndereco"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Endereço (IP ou domínio)"
+        android:inputType="textUri" />
+
+    <EditText
+        android:id="@+id/edtPorta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Porta (ex: 443)"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/edtSni"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="SNI (ex: exemplo.com)"
+        android:inputType="textUri" />
+
+    <Spinner
+        android:id="@+id/spProtocolo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" />
+
+</LinearLayout>
