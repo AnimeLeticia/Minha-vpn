@@ -1,6 +1,7 @@
 package com.example.minhavpn
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -34,8 +35,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var txtStatus: TextView
     private lateinit var spServidores: Spinner
     private lateinit var adapter: ArrayAdapter<String>
-    private val servidores = mutableListOf<Servidor>()
-    private var conectado = false
+    private val servidores: MutableList<Servidor> = mutableListOf()
+    private var conectado: Boolean = false
 
     private val pedirPermissao =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -50,17 +51,18 @@ class MainActivity : AppCompatActivity() {
         txtStatus = findViewById(R.id.txtStatus)
         spServidores = findViewById(R.id.spServidores)
 
+        val listaInicial: MutableList<String> = mutableListOf()
         adapter = object : ArrayAdapter<String>(
-            this, android.R.layout.simple_spinner_item, mutableListOf()
+            this, android.R.layout.simple_spinner_item, listaInicial
         ) {
-            override fun getView(pos: Int, v: View?, parent: ViewGroup): View {
-                val t = super.getView(pos, v, parent) as TextView
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val t = super.getView(position, convertView, parent) as TextView
                 t.setTextColor(Color.WHITE)
                 return t
             }
 
-            override fun getDropDownView(pos: Int, v: View?, parent: ViewGroup): View {
-                val t = super.getDropDownView(pos, v, parent) as TextView
+            override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val t = super.getDropDownView(position, convertView, parent) as TextView
                 t.setTextColor(Color.WHITE)
                 t.setBackgroundColor(Color.parseColor("#1E1E1E"))
                 t.setPadding(24, 24, 24, 24)
@@ -91,47 +93,51 @@ class MainActivity : AppCompatActivity() {
     // ---------- Servidores ----------
 
     private fun mostrarDialogo() {
-        val view = layoutInflater.inflate(R.layout.dialog_servidor, null)
-        val edtNome = view.findViewById<EditText>(R.id.edtNome)
-        val edtEndereco = view.findViewById<EditText>(R.id.edtEndereco)
-        val edtPorta = view.findViewById<EditText>(R.id.edtPorta)
-        val edtSni = view.findViewById<EditText>(R.id.edtSni)
-        val spProtocolo = view.findViewById<Spinner>(R.id.spProtocolo)
+        val view: View = layoutInflater.inflate(R.layout.dialog_servidor, null)
+        val edtNome: EditText = view.findViewById(R.id.edtNome)
+        val edtEndereco: EditText = view.findViewById(R.id.edtEndereco)
+        val edtPorta: EditText = view.findViewById(R.id.edtPorta)
+        val edtSni: EditText = view.findViewById(R.id.edtSni)
+        val spProtocolo: Spinner = view.findViewById(R.id.spProtocolo)
 
-        spProtocolo.adapter = ArrayAdapter(
-            this, android.R.layout.simple_spinner_dropdown_item,
-            listOf("VLESS", "VMess", "Trojan", "WireGuard")
+        val protocolos: List<String> = listOf("VLESS", "VMess", "Trojan", "WireGuard")
+        val adapterProtocolo = ArrayAdapter<String>(
+            this, android.R.layout.simple_spinner_dropdown_item, protocolos
         )
+        spProtocolo.adapter = adapterProtocolo
+
+        val aoSalvar = DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
+            val nome: String = edtNome.text.toString().trim()
+            val endereco: String = edtEndereco.text.toString().trim()
+            val porta: Int? = edtPorta.text.toString().toIntOrNull()
+            if (nome.isEmpty() || endereco.isEmpty() || porta == null) {
+                Toast.makeText(this, "Preencha nome, endereço e porta", Toast.LENGTH_SHORT).show()
+            } else {
+                val novo = Servidor(
+                    nome,
+                    endereco,
+                    porta,
+                    edtSni.text.toString().trim(),
+                    spProtocolo.selectedItem.toString()
+                )
+                servidores.add(novo)
+                salvarServidores()
+                atualizarLista()
+                spServidores.setSelection(servidores.size - 1)
+            }
+        }
 
         AlertDialog.Builder(this)
             .setTitle("Adicionar servidor")
             .setView(view)
-            .setPositiveButton("Salvar") { _, _ ->
-                val nome = edtNome.text.toString().trim()
-                val endereco = edtEndereco.text.toString().trim()
-                val porta = edtPorta.text.toString().toIntOrNull()
-                if (nome.isEmpty() || endereco.isEmpty() || porta == null) {
-                    Toast.makeText(this, "Preencha nome, endereço e porta", Toast.LENGTH_SHORT).show()
-                } else {
-                    servidores.add(
-                        Servidor(
-                            nome, endereco, porta,
-                            edtSni.text.toString().trim(),
-                            spProtocolo.selectedItem.toString()
-                        )
-                    )
-                    salvarServidores()
-                    atualizarLista()
-                    spServidores.setSelection(servidores.size - 1)
-                }
-            }
+            .setPositiveButton("Salvar", aoSalvar)
             .setNegativeButton("Cancelar", null)
             .show()
     }
 
     private fun excluirSelecionado() {
-        val pos = spServidores.selectedItemPosition
-        if (servidores.isNotEmpty() && pos in servidores.indices) {
+        val pos: Int = spServidores.selectedItemPosition
+        if (servidores.isNotEmpty() && pos >= 0 && pos < servidores.size) {
             servidores.removeAt(pos)
             salvarServidores()
             atualizarLista()
@@ -143,37 +149,41 @@ class MainActivity : AppCompatActivity() {
         if (servidores.isEmpty()) {
             adapter.add("Nenhum servidor adicionado")
         } else {
-            adapter.addAll(servidores.map { "${it.nome}  •  ${it.protocolo}" })
+            for (s in servidores) {
+                adapter.add(s.nome + "  •  " + s.protocolo)
+            }
         }
         adapter.notifyDataSetChanged()
     }
 
     private fun salvarServidores() {
         val arr = JSONArray()
-        servidores.forEach {
-            arr.put(
-                JSONObject()
-                    .put("nome", it.nome)
-                    .put("endereco", it.endereco)
-                    .put("porta", it.porta)
-                    .put("sni", it.sni)
-                    .put("protocolo", it.protocolo)
-            )
+        for (s in servidores) {
+            val o = JSONObject()
+            o.put("nome", s.nome)
+            o.put("endereco", s.endereco)
+            o.put("porta", s.porta)
+            o.put("sni", s.sni)
+            o.put("protocolo", s.protocolo)
+            arr.put(o)
         }
         getSharedPreferences("vpn", Context.MODE_PRIVATE)
             .edit().putString("lista", arr.toString()).apply()
     }
 
     private fun carregarServidores() {
-        val txt = getSharedPreferences("vpn", Context.MODE_PRIVATE)
+        val txt: String = getSharedPreferences("vpn", Context.MODE_PRIVATE)
             .getString("lista", "[]") ?: "[]"
         val arr = JSONArray(txt)
         for (i in 0 until arr.length()) {
-            val o = arr.getJSONObject(i)
+            val o: JSONObject = arr.getJSONObject(i)
             servidores.add(
                 Servidor(
-                    o.getString("nome"), o.getString("endereco"), o.getInt("porta"),
-                    o.optString("sni"), o.optString("protocolo", "VLESS")
+                    o.getString("nome"),
+                    o.getString("endereco"),
+                    o.getInt("porta"),
+                    o.optString("sni", ""),
+                    o.optString("protocolo", "VLESS")
                 )
             )
         }
@@ -182,21 +192,24 @@ class MainActivity : AppCompatActivity() {
     // ---------- VPN ----------
 
     private fun iniciarVpn() {
-        val pos = spServidores.selectedItemPosition
-        val s = servidores.getOrNull(pos)
-        val intent = Intent(this, MyVpnService::class.java).setAction("START")
+        val pos: Int = spServidores.selectedItemPosition
+        val s: Servidor? = servidores.getOrNull(pos)
+        val intent = Intent(this, MyVpnService::class.java)
+        intent.action = "START"
         if (s != null) {
             intent.putExtra("endereco", s.endereco)
-                .putExtra("porta", s.porta)
-                .putExtra("sni", s.sni)
-                .putExtra("protocolo", s.protocolo)
+            intent.putExtra("porta", s.porta)
+            intent.putExtra("sni", s.sni)
+            intent.putExtra("protocolo", s.protocolo)
         }
         startService(intent)
         atualizarTela(true)
     }
 
     private fun pararVpn() {
-        startService(Intent(this, MyVpnService::class.java).setAction("STOP"))
+        val intent = Intent(this, MyVpnService::class.java)
+        intent.action = "STOP"
+        startService(intent)
         atualizarTela(false)
     }
 
