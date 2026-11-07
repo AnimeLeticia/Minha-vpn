@@ -15,7 +15,16 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - name: Preparar PATH do Go
+      - name: NDK novo
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;28.2.13676358" > /dev/null || true
+          ls $ANDROID_HOME/ndk
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.2.13676358" >> $GITHUB_ENV
+      - name: Remover naive
+        run: |
+          grep -rn with_naive_outbound cmd Makefile || true
+          grep -rl with_naive_outbound cmd Makefile | xargs -r sed -i 's/with_naive_outbound/with_gvisor/g' || true
+      - name: PATH do Go
         run: echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
       - run: make lib_install
       - run: make lib_android
