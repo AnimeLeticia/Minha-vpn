@@ -4,129 +4,178 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <style>
-:root { --bg:#0e1116; --card:#171c26; --line:#252c3b; --txt:#e8ebf3; --mut:#8a93a8; --acc:#7c5cff; --ok:#22d3a6; --bad:#ff5d6c; }
-* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body { margin:0; background:var(--bg); color:var(--txt); font-family:sans-serif; height:100vh; display:flex; flex-direction:column; }
-header { padding:18px 20px 8px; display:flex; align-items:center; justify-content:space-between; }
-header h1 { margin:0; font-size:22px; letter-spacing:.5px; }
-header h1 span { color:var(--acc); }
-.pill { font-size:12px; padding:5px 12px; border-radius:20px; background:var(--card); color:var(--mut); border:1px solid var(--line); }
-.pill.on { color:var(--ok); border-color:var(--ok); }
-main { flex:1; overflow-y:auto; padding:8px 20px 20px; }
-.tab { display:none; } .tab.show { display:block; }
+:root{--bg:#0a0d14;--bg2:#0f1320;--card:#141a29;--line:#222b40;--txt:#eef1f8;--mut:#8791a8;--acc:#7c5cff;--acc2:#22d3a6;--ok:#22d3a6;--bad:#ff5d6c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(120% 60% at 50% -10%,#1b1740 0%,var(--bg) 60%);color:var(--txt);font-family:system-ui,sans-serif;display:flex;flex-direction:column}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 6px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;color:#fff}
+.logo svg{width:20px;height:20px}
+h1{margin:0;font-size:20px;letter-spacing:.3px}
+h1 span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pill{font-size:12px;padding:6px 12px;border-radius:20px;background:var(--card);color:var(--mut);border:1px solid var(--line);display:flex;align-items:center;gap:6px}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--bad);display:inline-block}
+.pill.on{color:var(--ok);border-color:rgba(34,211,166,.5)}
+.pill.on i{background:var(--ok)}
+main{flex:1;overflow-y:auto;padding:6px 20px 18px}
+.tab{display:none}.tab.show{display:block}
 
-.card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; margin-bottom:12px; position:relative; }
-.label { position:absolute; top:-9px; left:14px; background:var(--bg); border:1px solid var(--line); color:var(--acc); font-size:11px; font-weight:bold; padding:2px 10px; border-radius:10px; letter-spacing:1px; }
-.card .t { font-size:17px; font-weight:bold; margin-top:4px; }
-.card .s { font-size:13px; color:var(--mut); margin-top:4px; word-break:break-all; }
+.stage{position:relative;width:210px;height:210px;margin:20px auto 6px}
+.halo{position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--acc),var(--acc2),var(--acc));filter:blur(16px);opacity:.35;transition:opacity .4s}
+.stage.on .halo{opacity:.85;animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#btn{position:absolute;inset:14px;border-radius:50%;border:2px solid rgba(255,255,255,.14);background:radial-gradient(circle at 30% 25%,#2b3150,#10131e);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;letter-spacing:1.5px}
+#btn svg{width:46px;height:46px;stroke-width:2.2;color:var(--acc)}
+.stage.on #btn svg{color:var(--ok)}
+#tempo{text-align:center;color:var(--mut);font-size:20px;margin:10px 0 22px;font-variant-numeric:tabular-nums}
 
-.power { display:flex; flex-direction:column; align-items:center; margin:26px 0 22px; }
-#btn { width:150px; height:150px; border-radius:50%; border:3px solid var(--acc); background:transparent; color:var(--acc); font-size:18px; font-weight:bold; letter-spacing:1px; transition:all .35s; box-shadow:0 0 30px rgba(124,92,255,.35); }
-#btn.on { border-color:var(--ok); color:var(--ok); box-shadow:0 0 45px rgba(34,211,166,.5); animation:p 2s infinite; }
-@keyframes p { 50% { box-shadow:0 0 70px rgba(34,211,166,.8); } }
-#tempo { margin-top:14px; color:var(--mut); font-size:20px; font-variant-numeric:tabular-nums; }
+.card{background:linear-gradient(180deg,var(--card),#111624);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px;position:relative}
+.label{position:absolute;top:-9px;left:14px;background:var(--bg2);border:1px solid var(--line);color:var(--acc);font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;letter-spacing:1.2px}
+.t{font-size:16px;font-weight:700}
+.s{font-size:13px;color:var(--mut);margin-top:4px;word-break:break-all}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.grow{flex:1;min-width:0}
+h2{margin:0;font-size:18px}
+.top{margin:10px 0 16px}
+.add{background:linear-gradient(135deg,var(--acc),#5b8cff);border:none;color:#fff;padding:9px 16px;border-radius:20px;font-size:14px;font-weight:600}
+.item.sel{border-color:var(--acc);background:linear-gradient(180deg,#1d1a3d,#141327)}
+.tag{font-size:10px;padding:2px 8px;border-radius:8px;background:var(--acc);margin-left:8px;vertical-align:middle}
+.acts{display:flex;gap:2px}
+.ic{background:none;border:none;color:var(--mut);font-size:18px;padding:6px 10px}
+.ic.bad{color:var(--bad)}
+.vazio{text-align:center;color:var(--mut);padding:26px 0}
+.hint{color:var(--mut);font-size:13px;line-height:1.5;margin:0 0 14px}
 
-.row { display:flex; align-items:center; justify-content:space-between; }
-.add { background:var(--acc); border:none; color:#fff; padding:9px 16px; border-radius:20px; font-size:14px; }
-.item { cursor:pointer; }
-.item.sel { border-color:var(--acc); background:#1d1b34; }
-.tag { font-size:11px; padding:2px 8px; border-radius:8px; background:var(--acc); margin-left:8px; }
-.del { background:none; border:none; color:var(--bad); font-size:20px; padding:4px 8px; }
-.vazio { text-align:center; color:var(--mut); padding:28px 0; }
+select,input,textarea{width:100%;padding:13px 14px;font-size:15px;background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:12px;font-family:inherit;margin-bottom:10px}
+select{margin:6px 0 0}
+textarea{min-height:110px;resize:vertical;font-family:monospace;font-size:13px}
+.btn2{width:100%;padding:13px;font-size:15px;border:none;border-radius:12px;color:#fff;background:linear-gradient(135deg,var(--acc),#5b8cff);font-weight:600}
+.btn2.alt{background:var(--line)}
+.chk{display:flex;align-items:center;gap:10px;margin:2px 0 12px;color:var(--mut);font-size:14px}
+.chk input{width:20px;height:20px;margin:0}
 
-.logbox { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; min-height:300px; font-family:monospace; font-size:13px; line-height:1.6; }
-.logbox .h { color:var(--acc); }
-.tools { display:flex; gap:8px; }
-.tools button { background:var(--card); border:1px solid var(--line); color:var(--txt); padding:8px 14px; border-radius:12px; font-size:13px; }
+.logbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;min-height:300px;font-family:monospace;font-size:13px;line-height:1.6}
+.logbox .h{color:var(--acc)}
+.tools{display:flex;gap:8px}
+.tools button{background:var(--card);border:1px solid var(--line);color:var(--txt);padding:8px 14px;border-radius:12px;font-size:13px}
 
-nav { display:flex; background:var(--card); border-top:1px solid var(--line); }
-nav button { flex:1; background:none; border:none; color:var(--mut); padding:12px 0 14px; font-size:12px; }
-nav button b { display:block; font-size:20px; margin-bottom:2px; }
-nav button.act { color:var(--acc); }
+nav{display:flex;background:rgba(15,19,32,.96);border-top:1px solid var(--line)}
+nav button{flex:1;background:none;border:none;color:var(--mut);padding:10px 0 12px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button.act{color:var(--acc)}
 
-#modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); align-items:flex-end; z-index:10; }
-#modal.show { display:flex; }
-.sheet { width:100%; max-height:90vh; overflow-y:auto; background:#131824; border-radius:24px 24px 0 0; padding:22px 20px 26px; }
-.sheet h3 { margin:0 0 14px; }
-.sheet input, .sheet select { width:100%; margin-bottom:10px; padding:13px 14px; font-size:15px; background:var(--bg); color:var(--txt); border:1px solid var(--line); border-radius:12px; }
-.btns { display:flex; gap:10px; margin-top:6px; }
-.btns button { flex:1; padding:13px; font-size:15px; border:none; border-radius:12px; color:#fff; }
-.c { background:var(--line); } .s2 { background:var(--acc); font-weight:bold; }
-#toast { position:fixed; left:50%; bottom:90px; transform:translateX(-50%); background:#2b3350; padding:10px 18px; border-radius:20px; font-size:14px; opacity:0; transition:opacity .3s; z-index:20; pointer-events:none; }
-#toast.show { opacity:1; }
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);align-items:flex-end;z-index:10}
+.modal.show{display:flex}
+.sheet{width:100%;max-height:92vh;overflow-y:auto;background:#121827;border-radius:24px 24px 0 0;padding:22px 20px 26px}
+.sheet h3{margin:0 0 14px}
+.btns{display:flex;gap:10px;margin-top:6px}
+.btns button{flex:1}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#2b3350;padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;transition:opacity .3s;z-index:20;pointer-events:none;max-width:90%;text-align:center}
+#toast.show{opacity:1}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Minha<span>VPN</span></h1>
-  <div class="pill" id="pill">Desconectado</div>
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9.5 12l2 2 3.5-4"/></svg></div>
+    <h1>Cipher<span>VPN</span></h1>
+  </div>
+  <div class="pill" id="pill"><i></i><span id="pillTxt">Desconectado</span></div>
 </header>
 
 <main>
-  <!-- INÍCIO -->
   <section class="tab show" id="t-inicio">
-    <div class="power">
-      <button id="btn">LIGAR</button>
-      <div id="tempo">00:00:00</div>
+    <div class="stage" id="stage">
+      <div class="halo"></div>
+      <button id="btn"><svg viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg><span id="btnTxt">LIGAR</span></button>
     </div>
+    <div id="tempo">00:00:00</div>
+
     <div class="card"><span class="label">SERVIDOR</span>
-      <div class="t" id="hNome">Nenhum selecionado</div>
-      <div class="s" id="hInfo">Vá em Servidores e adicione um</div>
+      <select id="selServ"></select>
     </div>
-    <div class="card"><span class="label">MODO</span>
-      <div class="t" id="hModo">—</div>
-      <div class="s" id="hSni">—</div>
+    <div class="card"><span class="label">SNI</span>
+      <select id="selSni"></select>
+    </div>
+    <div class="card"><span class="label">RESUMO</span>
+      <div class="t" id="rNome">—</div>
+      <div class="s" id="rInfo">—</div>
+      <div class="s" id="rSni">—</div>
     </div>
   </section>
 
-  <!-- SERVIDORES -->
   <section class="tab" id="t-serv">
-    <div class="row" style="margin:8px 0 14px">
-      <h2 style="margin:0;font-size:18px">Servidores</h2>
-      <button class="add" id="btnAdd">+ Adicionar</button>
-    </div>
-    <div id="lista"></div>
+    <div class="row top"><h2>Servidores</h2><button class="add" id="btnAddServ">+ Adicionar</button></div>
+    <div id="listaServ"></div>
   </section>
 
-  <!-- REGISTROS -->
+  <section class="tab" id="t-sni">
+    <div class="row top"><h2>SNI</h2><button class="add" id="btnAddSni">+ Adicionar</button></div>
+    <p class="hint">O SNI é separado do servidor. Cadastre quantos quiser e combine com qualquer servidor na tela Início.</p>
+    <div id="listaSni"></div>
+  </section>
+
   <section class="tab" id="t-log">
-    <div class="row" style="margin:8px 0 14px">
-      <h2 style="margin:0;font-size:18px">Registros</h2>
+    <div class="row top"><h2>Registros</h2>
       <div class="tools"><button id="btnCopy">Copiar</button><button id="btnClear">Limpar</button></div>
     </div>
     <div class="logbox" id="logbox"></div>
   </section>
+
+  <section class="tab" id="t-cfg">
+    <div class="top"><h2>Importar e exportar</h2></div>
+    <div class="card"><span class="label">IMPORTAR</span>
+      <p class="hint" style="margin-top:6px">Cole links <b>vless://</b>, <b>vmess://</b>, <b>trojan://</b> ou <b>ssh://usuario:senha@host:porta</b> (um por linha), ou um backup exportado daqui.</p>
+      <textarea id="impTxt" placeholder="Cole aqui..." autocapitalize="none" autocomplete="off" spellcheck="false"></textarea>
+      <button class="btn2" id="btnImp">Importar</button>
+    </div>
+    <div class="card"><span class="label">EXPORTAR</span>
+      <label class="chk" style="margin-top:6px"><input type="checkbox" id="expSenha"> Incluir senhas e UUID</label>
+      <button class="btn2 alt" id="btnExp">Gerar backup</button>
+      <textarea id="expTxt" readonly placeholder="O backup aparece aqui" style="margin-top:10px"></textarea>
+      <button class="btn2" id="btnCopyExp">Copiar backup</button>
+      <p class="hint" style="margin:10px 0 0">Backups com senhas dão acesso aos seus servidores. Não compartilhe.</p>
+    </div>
+  </section>
 </main>
 
 <nav>
-  <button class="act" data-tab="inicio"><b>⌂</b>Início</button>
-  <button data-tab="serv"><b>☰</b>Servidores</button>
-  <button data-tab="log"><b>▤</b>Registros</button>
+  <button class="act" data-tab="inicio"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z"/></svg>Início</button>
+  <button data-tab="serv"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>Servidores</button>
+  <button data-tab="sni"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>SNI</button>
+  <button data-tab="log"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>Registros</button>
+  <button data-tab="cfg"><svg viewBox="0 0 24 24"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>Config</button>
 </nav>
 
-<div id="modal">
+<div class="modal" id="mServ">
   <div class="sheet">
-    <h3>Adicionar servidor</h3>
+    <h3 id="mServTitulo">Adicionar servidor</h3>
     <input id="fNome" placeholder="Nome">
-    <select id="fProto">
-      <option>SSH</option><option>VLESS</option><option>VMess</option>
-      <option>Trojan</option><option>WireGuard</option>
+    <select id="fProto" style="margin:0 0 10px">
+      <option>SSH</option><option>VLESS</option><option>VMess</option><option>Trojan</option>
     </select>
-    <input id="fEnd" placeholder="Endereço (IP ou domínio)">
+    <input id="fEnd" placeholder="Endereço (IP ou domínio)" autocapitalize="none">
     <input id="fPorta" type="number" placeholder="Porta (ex: 22 ou 443)">
-    <div id="boxSsh">
-      <input id="fUser" placeholder="Usuário SSH" autocapitalize="none">
-      <input id="fPass" type="password" placeholder="Senha SSH">
-      <select id="fModo">
-        <option>SSH direto</option>
-        <option>SSH + TLS (SNI)</option>
-      </select>
-    </div>
-    <input id="fSni" placeholder="SNI (ex: exemplo.com)" autocapitalize="none">
+    <div id="boxUser"><input id="fUser" placeholder="Usuário" autocapitalize="none"></div>
+    <div id="boxPass"><input id="fPass" type="password" placeholder="Senha"></div>
+    <div id="boxUuid"><input id="fUuid" placeholder="UUID" autocapitalize="none"></div>
     <div class="btns">
-      <button class="c" id="btnCancel">Cancelar</button>
-      <button class="s2" id="btnSave">Salvar</button>
+      <button class="btn2 alt" id="btnCancelServ">Cancelar</button>
+      <button class="btn2" id="btnSaveServ">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mSni">
+  <div class="sheet">
+    <h3 id="mSniTitulo">Adicionar SNI</h3>
+    <input id="sNome" placeholder="Nome (ex: Operadora X)">
+    <input id="sHost" placeholder="SNI (ex: exemplo.com)" autocapitalize="none">
+    <div class="btns">
+      <button class="btn2 alt" id="btnCancelSni">Cancelar</button>
+      <button class="btn2" id="btnSaveSni">Salvar</button>
     </div>
   </div>
 </div>
@@ -134,29 +183,24 @@ nav button.act { color:var(--acc); }
 
 <script>
 const A = window.Android || {
-  carregar: () => localStorage.getItem("lista") || "[]",
-  salvar: (j) => localStorage.setItem("lista", j),
+  carregar: () => localStorage.getItem("db") || "{}",
+  salvar: (j) => localStorage.setItem("db", j),
   ligar: () => onVpnState(true),
   desligar: () => onVpnState(false)
 };
 const $ = (id) => document.getElementById(id);
-let servidores = [], sel = 0, ligado = false, inicio = 0, timer = null, logs = [];
+let db = { servidores: [], snis: [], selServ: null, selSni: null };
+let ligado = false, inicio = 0, timer = null, logs = [], editServ = null, editSni = null;
 
-function toast(m) { const t = $("toast"); t.textContent = m; t.className = "show"; setTimeout(() => t.className = "", 2200); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function el(tag, cls, txt) { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
+function vazio(t) { return el("div", "vazio", t); }
+function toast(m) { const t = $("toast"); t.textContent = m; t.className = "show"; setTimeout(() => t.className = "", 2400); }
 function hora() { return new Date().toTimeString().slice(0, 8); }
 function log(m) { logs.push("[" + hora() + "] " + m); desenharLog(); }
-function desenharLog() {
-  const b = $("logbox"); b.innerHTML = "";
-  if (!logs.length) { b.textContent = "Sem registros."; return; }
-  logs.forEach((l) => {
-    const d = document.createElement("div");
-    const i = l.indexOf("]") + 1;
-    const h = document.createElement("span"); h.className = "h"; h.textContent = l.slice(0, i);
-    d.appendChild(h); d.appendChild(document.createTextNode(l.slice(i)));
-    b.appendChild(d);
-  });
-}
+function salvar() { A.salvar(JSON.stringify(db)); }
 
+/* ---------- abas ---------- */
 document.querySelectorAll("nav button").forEach((b) => b.onclick = () => {
   document.querySelectorAll("nav button").forEach((x) => x.className = "");
   b.className = "act";
@@ -164,100 +208,183 @@ document.querySelectorAll("nav button").forEach((b) => b.onclick = () => {
   $("t-" + b.dataset.tab).className = "tab show";
 });
 
+/* ---------- dados ---------- */
+function addSni(nome, host) {
+  host = (host || "").trim();
+  if (!host) return null;
+  let f = db.snis.find((x) => x.host.toLowerCase() === host.toLowerCase());
+  if (!f) { f = { id: uid(), nome: (nome || host).trim(), host: host }; db.snis.push(f); }
+  return f;
+}
+function addServ(x) {
+  if (!x || !x.endereco || !x.porta) return null;
+  const nome = x.nome || x.endereco;
+  let f = db.servidores.find((s) => s.protocolo === x.protocolo && s.endereco === x.endereco && s.porta === x.porta && s.nome === nome);
+  if (f) return f;
+  f = { id: uid(), nome: nome, protocolo: x.protocolo || "SSH", endereco: x.endereco, porta: x.porta,
+        usuario: x.usuario || "", senha: x.senha || "", uuid: x.uuid || "", extra: x.extra || null };
+  db.servidores.push(f);
+  return f;
+}
+function migrar(s) {
+  addServ({ nome: s.nome, protocolo: s.protocolo, endereco: s.endereco, porta: s.porta, usuario: s.usuario, senha: s.senha });
+  if (s.sni) addSni(s.sni, s.sni);
+}
 function carregar() {
-  try { servidores = JSON.parse(A.carregar()); } catch (e) { servidores = []; }
-  if (sel >= servidores.length) sel = 0;
-  desenhar();
+  let raw = null;
+  try { raw = JSON.parse(A.carregar()); } catch (e) {}
+  if (Array.isArray(raw)) { raw.forEach(migrar); salvar(); }
+  else if (raw && Array.isArray(raw.servidores)) {
+    db.servidores = raw.servidores;
+    db.snis = Array.isArray(raw.snis) ? raw.snis : [];
+    db.selServ = raw.selServ || null;
+    db.selSni = raw.selSni || null;
+  }
+  atualizar();
 }
-function salvar() { A.salvar(JSON.stringify(servidores)); }
+function srvSel() { return db.servidores.find((s) => s.id === db.selServ) || null; }
+function sniSel() { return db.snis.find((n) => n.id === db.selSni) || null; }
 
-function desenhar() {
-  const box = $("lista"); box.innerHTML = "";
-  if (!servidores.length) box.innerHTML = '<div class="vazio">Nenhum servidor adicionado</div>';
-  servidores.forEach((s, i) => {
-    const c = document.createElement("div");
-    c.className = "card item" + (i === sel ? " sel" : "");
-    const r = document.createElement("div"); r.className = "row";
-    const e = document.createElement("div");
-    const n = document.createElement("div"); n.className = "t"; n.textContent = s.nome;
-    const tg = document.createElement("span"); tg.className = "tag"; tg.textContent = s.protocolo; n.appendChild(tg);
-    const inf = document.createElement("div"); inf.className = "s";
-    inf.textContent = s.endereco + ":" + s.porta + (s.sni ? "  •  SNI " + s.sni : "");
-    e.appendChild(n); e.appendChild(inf);
-    const d = document.createElement("button"); d.className = "del"; d.textContent = "✕";
-    d.onclick = (ev) => {
-      ev.stopPropagation();
-      if (ligado) { toast("Desligue a VPN antes"); return; }
-      servidores.splice(i, 1); if (sel >= servidores.length) sel = 0;
-      salvar(); desenhar(); resumo();
-    };
-    c.onclick = () => { if (!ligado) { sel = i; desenhar(); resumo(); } };
-    r.appendChild(e); r.appendChild(d); c.appendChild(r); box.appendChild(c);
-  });
-  resumo();
+/* ---------- telas ---------- */
+function atualizar() { preencherSelects(); desenharServ(); desenharSni(); resumo(); }
+
+function preencherSelects() {
+  const a = $("selServ"); a.innerHTML = "";
+  if (!db.servidores.length) a.appendChild(new Option("Nenhum servidor", ""));
+  db.servidores.forEach((s) => a.appendChild(new Option(s.nome + " • " + s.protocolo, s.id)));
+  if (db.servidores.length) a.value = srvSel() ? db.selServ : db.servidores[0].id;
+  db.selServ = a.value || null;
+
+  const b = $("selSni"); b.innerHTML = "";
+  b.appendChild(new Option("Sem SNI", ""));
+  db.snis.forEach((n) => b.appendChild(new Option(n.nome + " (" + n.host + ")", n.id)));
+  b.value = sniSel() ? db.selSni : "";
+  db.selSni = b.value || null;
+  a.disabled = ligado; b.disabled = ligado;
 }
+$("selServ").onchange = () => { db.selServ = $("selServ").value || null; salvar(); desenharServ(); resumo(); };
+$("selSni").onchange = () => { db.selSni = $("selSni").value || null; salvar(); desenharSni(); resumo(); };
 
 function resumo() {
-  const s = servidores[sel];
-  if (!s) { $("hNome").textContent = "Nenhum selecionado"; $("hInfo").textContent = "Vá em Servidores e adicione um"; $("hModo").textContent = "—"; $("hSni").textContent = "—"; return; }
-  $("hNome").textContent = s.nome;
-  $("hInfo").textContent = s.endereco + ":" + s.porta;
-  $("hModo").textContent = s.protocolo + (s.modo ? " → " + s.modo : "");
-  $("hSni").textContent = s.sni ? "SNI: " + s.sni : "Sem SNI";
+  const s = srvSel(), n = sniSel();
+  $("rNome").textContent = s ? s.nome : "Nenhum selecionado";
+  $("rInfo").textContent = s ? s.protocolo + " • " + s.endereco + ":" + s.porta : "Adicione um servidor na aba Servidores";
+  $("rSni").textContent = n ? "SNI: " + n.host : "Sem SNI";
 }
 
-function fmt(n) { const p = (x) => String(x).padStart(2, "0"); return p(Math.floor(n / 3600)) + ":" + p(Math.floor(n % 3600 / 60)) + ":" + p(n % 60); }
-
-function onVpnState(e) {
-  ligado = e;
-  $("btn").className = e ? "on" : ""; $("btn").textContent = e ? "DESLIGAR" : "LIGAR";
-  $("pill").textContent = e ? "Conectado" : "Desconectado"; $("pill").className = "pill" + (e ? " on" : "");
-  clearInterval(timer);
-  if (e) { inicio = Date.now(); timer = setInterval(() => $("tempo").textContent = fmt(Math.floor((Date.now() - inicio) / 1000)), 1000); log("Túnel VPN ativo"); }
-  else { $("tempo").textContent = "00:00:00"; log("Desconectado"); }
+function desenharServ() {
+  const box = $("listaServ"); box.innerHTML = "";
+  if (!db.servidores.length) { box.appendChild(vazio("Nenhum servidor adicionado")); return; }
+  db.servidores.forEach((s) => {
+    const c = el("div", "card item" + (s.id === db.selServ ? " sel" : ""));
+    const r = el("div", "row"), e = el("div", "grow");
+    const n = el("div", "t", s.nome); n.appendChild(el("span", "tag", s.protocolo));
+    e.appendChild(n); e.appendChild(el("div", "s", s.endereco + ":" + s.porta));
+    const ac = el("div", "acts");
+    const ed = el("button", "ic", "✎"); ed.onclick = (ev) => { ev.stopPropagation(); abrirServ(s.id); };
+    const dl = el("button", "ic bad", "✕"); dl.onclick = (ev) => { ev.stopPropagation(); apagarServ(s.id); };
+    ac.appendChild(ed); ac.appendChild(dl);
+    r.appendChild(e); r.appendChild(ac); c.appendChild(r);
+    c.onclick = () => { if (ligado) return; db.selServ = s.id; salvar(); atualizar(); };
+    box.appendChild(c);
+  });
 }
 
-$("btn").onclick = () => {
-  if (ligado) { A.desligar(); return; }
-  if (!servidores.length) { toast("Adicione um servidor primeiro"); return; }
-  const s = servidores[sel];
-  log("Servidor: " + s.nome + " (" + s.protocolo + ")");
-  log("Iniciando conexão...");
-  A.ligar(JSON.stringify(s));
-};
+function desenharSni() {
+  const box = $("listaSni"); box.innerHTML = "";
+  if (!db.snis.length) { box.appendChild(vazio("Nenhum SNI adicionado")); return; }
+  db.snis.forEach((n) => {
+    const c = el("div", "card item" + (n.id === db.selSni ? " sel" : ""));
+    const r = el("div", "row"), e = el("div", "grow");
+    e.appendChild(el("div", "t", n.nome)); e.appendChild(el("div", "s", n.host));
+    const ac = el("div", "acts");
+    const ed = el("button", "ic", "✎"); ed.onclick = (ev) => { ev.stopPropagation(); abrirSni(n.id); };
+    const dl = el("button", "ic bad", "✕"); dl.onclick = (ev) => { ev.stopPropagation(); apagarSni(n.id); };
+    ac.appendChild(ed); ac.appendChild(dl);
+    r.appendChild(e); r.appendChild(ac); c.appendChild(r);
+    c.onclick = () => { if (ligado) return; db.selSni = (db.selSni === n.id) ? null : n.id; salvar(); atualizar(); };
+    box.appendChild(c);
+  });
+}
 
+function desenharLog() {
+  const b = $("logbox"); b.innerHTML = "";
+  if (!logs.length) { b.textContent = "Sem registros."; return; }
+  logs.forEach((l) => {
+    const d = el("div"), i = l.indexOf("]") + 1;
+    d.appendChild(el("span", "h", l.slice(0, i)));
+    d.appendChild(document.createTextNode(l.slice(i)));
+    b.appendChild(d);
+  });
+}
+
+/* ---------- servidor: formulário ---------- */
 function ajustaForm() {
-  const ssh = $("fProto").value === "SSH";
-  $("boxSsh").style.display = ssh ? "block" : "none";
+  const p = $("fProto").value;
+  $("boxUser").style.display = p === "SSH" ? "block" : "none";
+  $("boxPass").style.display = (p === "SSH" || p === "Trojan") ? "block" : "none";
+  $("boxUuid").style.display = (p === "VLESS" || p === "VMess") ? "block" : "none";
 }
 $("fProto").onchange = ajustaForm;
 
-$("btnAdd").onclick = () => {
+function abrirServ(id) {
   if (ligado) { toast("Desligue a VPN antes"); return; }
-  ["fNome", "fEnd", "fPorta", "fSni", "fUser", "fPass"].forEach((id) => $(id).value = "");
-  ajustaForm(); $("modal").className = "show";
-};
-$("btnCancel").onclick = () => $("modal").className = "";
-$("btnSave").onclick = () => {
-  const nome = $("fNome").value.trim(), end = $("fEnd").value.trim(), porta = parseInt($("fPorta").value, 10);
-  const proto = $("fProto").value;
+  editServ = id || null;
+  const s = id ? db.servidores.find((x) => x.id === id) : null;
+  $("mServTitulo").textContent = s ? "Editar servidor" : "Adicionar servidor";
+  $("fNome").value = s ? s.nome : "";
+  $("fProto").value = s ? s.protocolo : "SSH";
+  if ($("fProto").selectedIndex < 0) $("fProto").selectedIndex = 0;
+  $("fEnd").value = s ? s.endereco : "";
+  $("fPorta").value = s ? s.porta : "";
+  $("fUser").value = s ? (s.usuario || "") : "";
+  $("fPass").value = s ? (s.senha || "") : "";
+  $("fUuid").value = s ? (s.uuid || "") : "";
+  ajustaForm();
+  $("mServ").className = "modal show";
+}
+$("btnAddServ").onclick = () => abrirServ(null);
+$("btnCancelServ").onclick = () => { $("mServ").className = "modal"; };
+
+$("btnSaveServ").onclick = () => {
+  const nome = $("fNome").value.trim(), end = $("fEnd").value.trim();
+  const porta = parseInt($("fPorta").value, 10), p = $("fProto").value;
   if (!nome || !end || isNaN(porta)) { toast("Preencha nome, endereço e porta"); return; }
-  if (proto === "SSH" && (!$("fUser").value.trim() || !$("fPass").value)) { toast("Preencha usuário e senha"); return; }
-  const s = { nome: nome, endereco: end, porta: porta, sni: $("fSni").value.trim(), protocolo: proto };
-  if (proto === "SSH") { s.usuario = $("fUser").value.trim(); s.senha = $("fPass").value; s.modo = $("fModo").value; }
-  servidores.push(s); sel = servidores.length - 1;
-  salvar(); desenhar(); $("modal").className = ""; toast("Servidor salvo");
+  const o = { nome: nome, protocolo: p, endereco: end, porta: porta, usuario: "", senha: "", uuid: "" };
+  if (p === "SSH") {
+    o.usuario = $("fUser").value.trim(); o.senha = $("fPass").value;
+    if (!o.usuario || !o.senha) { toast("Preencha usuário e senha"); return; }
+  } else if (p === "Trojan") {
+    o.senha = $("fPass").value;
+    if (!o.senha) { toast("Preencha a senha"); return; }
+  } else {
+    o.uuid = $("fUuid").value.trim();
+    if (!o.uuid) { toast("Preencha o UUID"); return; }
+  }
+  if (editServ) {
+    const i = db.servidores.findIndex((x) => x.id === editServ);
+    o.id = editServ; o.extra = i >= 0 ? db.servidores[i].extra : null;
+    if (i >= 0) db.servidores[i] = o;
+  } else {
+    o.id = uid(); o.extra = null; db.servidores.push(o); db.selServ = o.id;
+  }
+  salvar(); atualizar();
+  $("mServ").className = "modal"; toast("Servidor salvo");
 };
 
-$("btnClear").onclick = () => { logs = []; desenharLog(); };
-$("btnCopy").onclick = () => {
-  const t = document.createElement("textarea"); t.value = logs.join("\n"); document.body.appendChild(t);
-  t.select(); document.execCommand("copy"); document.body.removeChild(t); toast("Registros copiados");
-};
+function apagarServ(id) {
+  if (ligado) { toast("Desligue a VPN antes"); return; }
+  db.servidores = db.servidores.filter((s) => s.id !== id);
+  if (db.selServ === id) db.selServ = null;
+  salvar(); atualizar();
+}
 
-log("App iniciado");
-carregar(); ajustaForm();
-if (window.Android && A.estaLigado && A.estaLigado()) onVpnState(true);
-</script>
-</body>
-</html>
+/* ---------- SNI: formulário ---------- */
+function abrirSni(id) {
+  if (ligado) { toast("Desligue a VPN antes"); return; }
+  editSni = id || null;
+  const n = id ? db.snis.find((x) => x.id === id) : null;
+  $("mSniTitulo").textContent = n ? "Editar SNI" : "Adicionar SNI";
+  $("sNome").value = n ? n.nome : "";
+  $("sHost").value = n ? n.host : "";
+  $("mSni").class
