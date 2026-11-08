@@ -537,7 +537,14 @@ $("btn").onclick = function () {
   log("Iniciando conexão...");
   A.ligar(JSON.stringify(Object.assign({}, s, { sni: n ? n.host : "" })));
 };
-
+function onVpnLog(m) { log(m); }
+function onVpnError(m) { log("ERRO: " + m); toast(m); onVpnState(false); }
+var ultimoLog = "";
+setInterval(function () {
+  if (!window.Android || !ligado || !A.logs) return;
+  var t = A.logs();
+  if (t && t !== ultimoLog) { ultimoLog = t; $("logbox").textContent = t; }
+}, 2000);
 log("App iniciado");
 carregar();
 desenharLog();
