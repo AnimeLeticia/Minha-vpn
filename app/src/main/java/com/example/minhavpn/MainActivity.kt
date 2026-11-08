@@ -10,16 +10,21 @@ import android.webkit.WebView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
+import java.io.File
+import java.io.RandomAccessFile
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var web: WebView
-    private var conectado: Boolean = false
     private var pendente: String = "{}"
 
     private val pedirPermissao =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) iniciarVpn() else avisarTela(false)
+            if (result.resultCode == RESULT_OK) {
+                iniciarVpn()
+            } else {
+                js("onVpnError(" + JSONObject.quote("Permissão de VPN negada") + ")")
+            }
         }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -31,35 +36,42 @@ class MainActivity : AppCompatActivity() {
         web = findViewById(R.id.web)
         web.settings.javaScriptEnabled = true
         web.addJavascriptInterface(Ponte(), "Android")
+        MyVpnService.ouvinte = { tipo, msg -> runOnUiThread { tratar(tipo, msg) } }
         web.loadUrl("file:///android_asset/index.html")
     }
 
-    private fun avisarTela(ligado: Boolean) {
-        web.evaluateJavascript("onVpnState(" + ligado + ")", null)
+    override fun onDestroy() {
+        MyVpnService.ouvinte = null
+        super.onDestroy()
+    }
+
+    private fun js(codigo: String) {
+        web.evaluateJavascript(codigo, null)
+    }
+
+    private fun tratar(tipo: String, msg: String) {
+        if (tipo == "on") {
+            js("onVpnState(true)")
+        } else if (tipo == "off") {
+            js("onVpnState(false)")
+        } else if (tipo == "erro") {
+            js("onVpnError(" + JSONObject.quote(msg) + ")")
+        } else if (tipo == "log") {
+            js("onVpnLog(" + JSONObject.quote(msg) + ")")
+        }
     }
 
     private fun iniciarVpn() {
         val intent = Intent(this, MyVpnService::class.java)
         intent.action = "START"
-        try {
-            val o = JSONObject(pendente)
-            intent.putExtra("endereco", o.optString("endereco"))
-            intent.putExtra("porta", o.optInt("porta"))
-            intent.putExtra("sni", o.optString("sni"))
-            intent.putExtra("protocolo", o.optString("protocolo"))
-        } catch (e: Exception) {
-        }
+        intent.putExtra("servidor", pendente)
         startService(intent)
-        conectado = true
-        avisarTela(true)
     }
 
     private fun pararVpn() {
         val intent = Intent(this, MyVpnService::class.java)
         intent.action = "STOP"
         startService(intent)
-        conectado = false
-        avisarTela(false)
     }
 
     inner class Ponte {
@@ -77,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
         @JavascriptInterface
         fun estaLigado(): Boolean {
-            return conectado
+            return MyVpnService.ativo
         }
 
         @JavascriptInterface
@@ -92,6 +104,24 @@ class MainActivity : AppCompatActivity() {
         @JavascriptInterface
         fun desligar() {
             runOnUiThread { pararVpn() }
+        }
+
+        @JavascriptInterface
+        fun logs(): String {
+            try {
+                val f = File(filesDir, "sb/work/box.log")
+                if (!f.exists()) return ""
+                RandomAccessFile(f, "r").use { r ->
+                    val tam: Long = r.length()
+                    val n: Int = if (tam > 6000L) 6000 else tam.toInt()
+                    val buf = ByteArray(n)
+                    r.seek(tam - n)
+                    r.readFully(buf)
+                    return String(buf)
+                }
+            } catch (e: Exception) {
+                return ""
+            }
         }
     }
 }
