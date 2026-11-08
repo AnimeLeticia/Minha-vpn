@@ -3,46 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<script>
+window.onerror = function (m, u, l) {
+  var d = document.createElement("div");
+  d.style.cssText = "position:fixed;left:0;right:0;top:0;z-index:99;background:#b00020;color:#fff;padding:10px;font:12px monospace";
+  d.textContent = "ERRO: " + m + " (linha " + l + ") " + (navigator.userAgent.match(/Chrome\/[\d.]+/) || "");
+  (document.body || document.documentElement).appendChild(d);
+};
+</script>
 <style>
 :root{--bg:#0a0d14;--bg2:#0f1320;--card:#141a29;--line:#222b40;--txt:#eef1f8;--mut:#8791a8;--acc:#7c5cff;--acc2:#22d3a6;--ok:#22d3a6;--bad:#ff5d6c}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{margin:0;background:radial-gradient(120% 60% at 50% -10%,#1b1740 0%,var(--bg) 60%);color:var(--txt);font-family:system-ui,sans-serif;display:flex;flex-direction:column}
+body{margin:0;background:#0a0d14;color:var(--txt);font-family:sans-serif;display:flex;flex-direction:column}
 svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 6px}
-.brand{display:flex;align-items:center;gap:10px}
-.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;color:#fff}
+.brand{display:flex;align-items:center}
+.logo{width:34px;height:34px;margin-right:10px;border-radius:10px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;color:#fff}
 .logo svg{width:20px;height:20px}
 h1{margin:0;font-size:20px;letter-spacing:.3px}
-h1 span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.pill{font-size:12px;padding:6px 12px;border-radius:20px;background:var(--card);color:var(--mut);border:1px solid var(--line);display:flex;align-items:center;gap:6px}
-.pill i{width:8px;height:8px;border-radius:50%;background:var(--bad);display:inline-block}
-.pill.on{color:var(--ok);border-color:rgba(34,211,166,.5)}
+h1 span{color:var(--acc)}
+.pill{font-size:12px;padding:6px 12px;border-radius:20px;background:var(--card);color:var(--mut);border:1px solid var(--line);display:flex;align-items:center}
+.pill i{width:8px;height:8px;margin-right:6px;border-radius:50%;background:var(--bad);display:inline-block}
+.pill.on{color:var(--ok);border-color:#1f8f74}
 .pill.on i{background:var(--ok)}
-main{flex:1;overflow-y:auto;padding:6px 20px 18px}
+main{flex:1;min-height:0;overflow-y:auto;padding:6px 20px 18px}
 .tab{display:none}.tab.show{display:block}
 
 .stage{position:relative;width:210px;height:210px;margin:20px auto 6px}
-.halo{position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--acc),var(--acc2),var(--acc));filter:blur(16px);opacity:.35;transition:opacity .4s}
-.stage.on .halo{opacity:.85;animation:spin 6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-#btn{position:absolute;inset:14px;border-radius:50%;border:2px solid rgba(255,255,255,.14);background:radial-gradient(circle at 30% 25%,#2b3150,#10131e);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;letter-spacing:1.5px}
-#btn svg{width:46px;height:46px;stroke-width:2.2;color:var(--acc)}
+.halo{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));opacity:.3;transition:opacity .4s}
+.stage.on .halo{opacity:.8;animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.4}}
+#btn{position:absolute;top:14px;left:14px;right:14px;bottom:14px;border-radius:50%;border:2px solid #3a4260;background:#151a2b;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;font-weight:700;letter-spacing:1.5px}
+#btn svg{width:46px;height:46px;margin-bottom:8px;stroke-width:2.2;color:var(--acc)}
 .stage.on #btn svg{color:var(--ok)}
-#tempo{text-align:center;color:var(--mut);font-size:20px;margin:10px 0 22px;font-variant-numeric:tabular-nums}
+.stage.on #btn{border-color:var(--ok)}
+#tempo{text-align:center;color:var(--mut);font-size:20px;margin:10px 0 22px}
 
-.card{background:linear-gradient(180deg,var(--card),#111624);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px;position:relative}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px;position:relative}
 .label{position:absolute;top:-9px;left:14px;background:var(--bg2);border:1px solid var(--line);color:var(--acc);font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;letter-spacing:1.2px}
 .t{font-size:16px;font-weight:700}
 .s{font-size:13px;color:var(--mut);margin-top:4px;word-break:break-all}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.row{display:flex;align-items:center;justify-content:space-between}
+.row > *:not(:last-child){margin-right:10px}
 .grow{flex:1;min-width:0}
 h2{margin:0;font-size:18px}
 .top{margin:10px 0 16px}
-.add{background:linear-gradient(135deg,var(--acc),#5b8cff);border:none;color:#fff;padding:9px 16px;border-radius:20px;font-size:14px;font-weight:600}
-.item.sel{border-color:var(--acc);background:linear-gradient(180deg,#1d1a3d,#141327)}
+.add{background:var(--acc);border:none;color:#fff;padding:9px 16px;border-radius:20px;font-size:14px;font-weight:600}
+.item.sel{border-color:var(--acc);background:#1a1833}
 .tag{font-size:10px;padding:2px 8px;border-radius:8px;background:var(--acc);margin-left:8px;vertical-align:middle}
-.acts{display:flex;gap:2px}
+.acts{display:flex}
 .ic{background:none;border:none;color:var(--mut);font-size:18px;padding:6px 10px}
 .ic.bad{color:var(--bad)}
 .vazio{text-align:center;color:var(--mut);padding:26px 0}
@@ -51,27 +61,30 @@ h2{margin:0;font-size:18px}
 select,input,textarea{width:100%;padding:13px 14px;font-size:15px;background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:12px;font-family:inherit;margin-bottom:10px}
 select{margin:6px 0 0}
 textarea{min-height:110px;resize:vertical;font-family:monospace;font-size:13px}
-.btn2{width:100%;padding:13px;font-size:15px;border:none;border-radius:12px;color:#fff;background:linear-gradient(135deg,var(--acc),#5b8cff);font-weight:600}
+.btn2{width:100%;padding:13px;font-size:15px;border:none;border-radius:12px;color:#fff;background:var(--acc);font-weight:600}
 .btn2.alt{background:var(--line)}
-.chk{display:flex;align-items:center;gap:10px;margin:2px 0 12px;color:var(--mut);font-size:14px}
-.chk input{width:20px;height:20px;margin:0}
+.chk{display:flex;align-items:center;margin:2px 0 12px;color:var(--mut);font-size:14px}
+.chk input{width:20px;height:20px;margin:0 10px 0 0}
 
 .logbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;min-height:300px;font-family:monospace;font-size:13px;line-height:1.6}
 .logbox .h{color:var(--acc)}
-.tools{display:flex;gap:8px}
+.tools{display:flex}
 .tools button{background:var(--card);border:1px solid var(--line);color:var(--txt);padding:8px 14px;border-radius:12px;font-size:13px}
+.tools button + button{margin-left:8px}
 
-nav{display:flex;background:rgba(15,19,32,.96);border-top:1px solid var(--line)}
-nav button{flex:1;background:none;border:none;color:var(--mut);padding:10px 0 12px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav{display:flex;background:#0f1320;border-top:1px solid var(--line)}
+nav button{flex:1;background:none;border:none;color:var(--mut);padding:10px 0 12px;font-size:11px;display:flex;flex-direction:column;align-items:center}
+nav button svg{margin-bottom:3px}
 nav button.act{color:var(--acc)}
 
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);align-items:flex-end;z-index:10}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);align-items:flex-end;z-index:10}
 .modal.show{display:flex}
 .sheet{width:100%;max-height:92vh;overflow-y:auto;background:#121827;border-radius:24px 24px 0 0;padding:22px 20px 26px}
 .sheet h3{margin:0 0 14px}
-.btns{display:flex;gap:10px;margin-top:6px}
+.btns{display:flex;margin-top:6px}
 .btns button{flex:1}
-#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#2b3350;padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;transition:opacity .3s;z-index:20;pointer-events:none;max-width:90%;text-align:center}
+.btns button + button{margin-left:10px}
+#toast{position:fixed;left:50%;bottom:90px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:#2b3350;padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;transition:opacity .3s;z-index:20;pointer-events:none;max-width:90%;text-align:center}
 #toast.show{opacity:1}
 </style>
 </head>
@@ -182,44 +195,50 @@ nav button.act{color:var(--acc)}
 <div id="toast"></div>
 
 <script>
-const A = window.Android || {
-  carregar: () => localStorage.getItem("db") || "{}",
-  salvar: (j) => localStorage.setItem("db", j),
-  ligar: () => onVpnState(true),
-  desligar: () => onVpnState(false)
+var A = window.Android || {
+  carregar: function () { return localStorage.getItem("db") || "{}"; },
+  salvar: function (j) { localStorage.setItem("db", j); },
+  ligar: function () { onVpnState(true); },
+  desligar: function () { onVpnState(false); }
 };
-const $ = (id) => document.getElementById(id);
-let db = { servidores: [], snis: [], selServ: null, selSni: null };
-let ligado = false, inicio = 0, timer = null, logs = [], editServ = null, editSni = null;
+function $(id) { return document.getElementById(id); }
+function each(list, fn) { Array.prototype.forEach.call(list, fn); }
+var db = { servidores: [], snis: [], selServ: null, selSni: null };
+var ligado = false, inicio = 0, timer = null, logs = [], editServ = null, editSni = null;
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-function el(tag, cls, txt) { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
+function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
 function vazio(t) { return el("div", "vazio", t); }
-function toast(m) { const t = $("toast"); t.textContent = m; t.className = "show"; setTimeout(() => t.className = "", 2400); }
+function toast(m) { var t = $("toast"); t.textContent = m; t.className = "show"; setTimeout(function () { t.className = ""; }, 2400); }
 function hora() { return new Date().toTimeString().slice(0, 8); }
 function log(m) { logs.push("[" + hora() + "] " + m); desenharLog(); }
 function salvar() { A.salvar(JSON.stringify(db)); }
+function p2(x) { x = String(x); return x.length < 2 ? "0" + x : x; }
 
 /* ---------- abas ---------- */
-document.querySelectorAll("nav button").forEach((b) => b.onclick = () => {
-  document.querySelectorAll("nav button").forEach((x) => x.className = "");
-  b.className = "act";
-  document.querySelectorAll(".tab").forEach((t) => t.className = "tab");
-  $("t-" + b.dataset.tab).className = "tab show";
+each(document.querySelectorAll("nav button"), function (b) {
+  b.onclick = function () {
+    each(document.querySelectorAll("nav button"), function (x) { x.className = ""; });
+    b.className = "act";
+    each(document.querySelectorAll(".tab"), function (t) { t.className = "tab"; });
+    $("t-" + b.getAttribute("data-tab")).className = "tab show";
+  };
 });
 
 /* ---------- dados ---------- */
 function addSni(nome, host) {
   host = (host || "").trim();
   if (!host) return null;
-  let f = db.snis.find((x) => x.host.toLowerCase() === host.toLowerCase());
+  var f = db.snis.filter(function (x) { return x.host.toLowerCase() === host.toLowerCase(); })[0];
   if (!f) { f = { id: uid(), nome: (nome || host).trim(), host: host }; db.snis.push(f); }
   return f;
 }
 function addServ(x) {
   if (!x || !x.endereco || !x.porta) return null;
-  const nome = x.nome || x.endereco;
-  let f = db.servidores.find((s) => s.protocolo === x.protocolo && s.endereco === x.endereco && s.porta === x.porta && s.nome === nome);
+  var nome = x.nome || x.endereco;
+  var f = db.servidores.filter(function (s) {
+    return s.protocolo === x.protocolo && s.endereco === x.endereco && s.porta === x.porta && s.nome === nome;
+  })[0];
   if (f) return f;
   f = { id: uid(), nome: nome, protocolo: x.protocolo || "SSH", endereco: x.endereco, porta: x.porta,
         usuario: x.usuario || "", senha: x.senha || "", uuid: x.uuid || "", extra: x.extra || null };
@@ -231,7 +250,7 @@ function migrar(s) {
   if (s.sni) addSni(s.sni, s.sni);
 }
 function carregar() {
-  let raw = null;
+  var raw = null;
   try { raw = JSON.parse(A.carregar()); } catch (e) {}
   if (Array.isArray(raw)) { raw.forEach(migrar); salvar(); }
   else if (raw && Array.isArray(raw.servidores)) {
@@ -242,76 +261,76 @@ function carregar() {
   }
   atualizar();
 }
-function srvSel() { return db.servidores.find((s) => s.id === db.selServ) || null; }
-function sniSel() { return db.snis.find((n) => n.id === db.selSni) || null; }
+function srvSel() { return db.servidores.filter(function (s) { return s.id === db.selServ; })[0] || null; }
+function sniSel() { return db.snis.filter(function (n) { return n.id === db.selSni; })[0] || null; }
 
 /* ---------- telas ---------- */
 function atualizar() { preencherSelects(); desenharServ(); desenharSni(); resumo(); }
 
 function preencherSelects() {
-  const a = $("selServ"); a.innerHTML = "";
+  var a = $("selServ"); a.innerHTML = "";
   if (!db.servidores.length) a.appendChild(new Option("Nenhum servidor", ""));
-  db.servidores.forEach((s) => a.appendChild(new Option(s.nome + " • " + s.protocolo, s.id)));
+  db.servidores.forEach(function (s) { a.appendChild(new Option(s.nome + " • " + s.protocolo, s.id)); });
   if (db.servidores.length) a.value = srvSel() ? db.selServ : db.servidores[0].id;
   db.selServ = a.value || null;
 
-  const b = $("selSni"); b.innerHTML = "";
+  var b = $("selSni"); b.innerHTML = "";
   b.appendChild(new Option("Sem SNI", ""));
-  db.snis.forEach((n) => b.appendChild(new Option(n.nome + " (" + n.host + ")", n.id)));
+  db.snis.forEach(function (n) { b.appendChild(new Option(n.nome + " (" + n.host + ")", n.id)); });
   b.value = sniSel() ? db.selSni : "";
   db.selSni = b.value || null;
   a.disabled = ligado; b.disabled = ligado;
 }
-$("selServ").onchange = () => { db.selServ = $("selServ").value || null; salvar(); desenharServ(); resumo(); };
-$("selSni").onchange = () => { db.selSni = $("selSni").value || null; salvar(); desenharSni(); resumo(); };
+$("selServ").onchange = function () { db.selServ = $("selServ").value || null; salvar(); desenharServ(); resumo(); };
+$("selSni").onchange = function () { db.selSni = $("selSni").value || null; salvar(); desenharSni(); resumo(); };
 
 function resumo() {
-  const s = srvSel(), n = sniSel();
+  var s = srvSel(), n = sniSel();
   $("rNome").textContent = s ? s.nome : "Nenhum selecionado";
   $("rInfo").textContent = s ? s.protocolo + " • " + s.endereco + ":" + s.porta : "Adicione um servidor na aba Servidores";
   $("rSni").textContent = n ? "SNI: " + n.host : "Sem SNI";
 }
 
 function desenharServ() {
-  const box = $("listaServ"); box.innerHTML = "";
+  var box = $("listaServ"); box.innerHTML = "";
   if (!db.servidores.length) { box.appendChild(vazio("Nenhum servidor adicionado")); return; }
-  db.servidores.forEach((s) => {
-    const c = el("div", "card item" + (s.id === db.selServ ? " sel" : ""));
-    const r = el("div", "row"), e = el("div", "grow");
-    const n = el("div", "t", s.nome); n.appendChild(el("span", "tag", s.protocolo));
+  db.servidores.forEach(function (s) {
+    var c = el("div", "card item" + (s.id === db.selServ ? " sel" : ""));
+    var r = el("div", "row"), e = el("div", "grow");
+    var n = el("div", "t", s.nome); n.appendChild(el("span", "tag", s.protocolo));
     e.appendChild(n); e.appendChild(el("div", "s", s.endereco + ":" + s.porta));
-    const ac = el("div", "acts");
-    const ed = el("button", "ic", "✎"); ed.onclick = (ev) => { ev.stopPropagation(); abrirServ(s.id); };
-    const dl = el("button", "ic bad", "✕"); dl.onclick = (ev) => { ev.stopPropagation(); apagarServ(s.id); };
+    var ac = el("div", "acts");
+    var ed = el("button", "ic", "✎"); ed.onclick = function (ev) { ev.stopPropagation(); abrirServ(s.id); };
+    var dl = el("button", "ic bad", "✕"); dl.onclick = function (ev) { ev.stopPropagation(); apagarServ(s.id); };
     ac.appendChild(ed); ac.appendChild(dl);
     r.appendChild(e); r.appendChild(ac); c.appendChild(r);
-    c.onclick = () => { if (ligado) return; db.selServ = s.id; salvar(); atualizar(); };
+    c.onclick = function () { if (ligado) return; db.selServ = s.id; salvar(); atualizar(); };
     box.appendChild(c);
   });
 }
 
 function desenharSni() {
-  const box = $("listaSni"); box.innerHTML = "";
+  var box = $("listaSni"); box.innerHTML = "";
   if (!db.snis.length) { box.appendChild(vazio("Nenhum SNI adicionado")); return; }
-  db.snis.forEach((n) => {
-    const c = el("div", "card item" + (n.id === db.selSni ? " sel" : ""));
-    const r = el("div", "row"), e = el("div", "grow");
+  db.snis.forEach(function (n) {
+    var c = el("div", "card item" + (n.id === db.selSni ? " sel" : ""));
+    var r = el("div", "row"), e = el("div", "grow");
     e.appendChild(el("div", "t", n.nome)); e.appendChild(el("div", "s", n.host));
-    const ac = el("div", "acts");
-    const ed = el("button", "ic", "✎"); ed.onclick = (ev) => { ev.stopPropagation(); abrirSni(n.id); };
-    const dl = el("button", "ic bad", "✕"); dl.onclick = (ev) => { ev.stopPropagation(); apagarSni(n.id); };
+    var ac = el("div", "acts");
+    var ed = el("button", "ic", "✎"); ed.onclick = function (ev) { ev.stopPropagation(); abrirSni(n.id); };
+    var dl = el("button", "ic bad", "✕"); dl.onclick = function (ev) { ev.stopPropagation(); apagarSni(n.id); };
     ac.appendChild(ed); ac.appendChild(dl);
     r.appendChild(e); r.appendChild(ac); c.appendChild(r);
-    c.onclick = () => { if (ligado) return; db.selSni = (db.selSni === n.id) ? null : n.id; salvar(); atualizar(); };
+    c.onclick = function () { if (ligado) return; db.selSni = (db.selSni === n.id) ? null : n.id; salvar(); atualizar(); };
     box.appendChild(c);
   });
 }
 
 function desenharLog() {
-  const b = $("logbox"); b.innerHTML = "";
+  var b = $("logbox"); b.innerHTML = "";
   if (!logs.length) { b.textContent = "Sem registros."; return; }
-  logs.forEach((l) => {
-    const d = el("div"), i = l.indexOf("]") + 1;
+  logs.forEach(function (l) {
+    var d = el("div"), i = l.indexOf("]") + 1;
     d.appendChild(el("span", "h", l.slice(0, i)));
     d.appendChild(document.createTextNode(l.slice(i)));
     b.appendChild(d);
@@ -320,7 +339,7 @@ function desenharLog() {
 
 /* ---------- servidor: formulário ---------- */
 function ajustaForm() {
-  const p = $("fProto").value;
+  var p = $("fProto").value;
   $("boxUser").style.display = p === "SSH" ? "block" : "none";
   $("boxPass").style.display = (p === "SSH" || p === "Trojan") ? "block" : "none";
   $("boxUuid").style.display = (p === "VLESS" || p === "VMess") ? "block" : "none";
@@ -330,7 +349,7 @@ $("fProto").onchange = ajustaForm;
 function abrirServ(id) {
   if (ligado) { toast("Desligue a VPN antes"); return; }
   editServ = id || null;
-  const s = id ? db.servidores.find((x) => x.id === id) : null;
+  var s = id ? db.servidores.filter(function (x) { return x.id === id; })[0] : null;
   $("mServTitulo").textContent = s ? "Editar servidor" : "Adicionar servidor";
   $("fNome").value = s ? s.nome : "";
   $("fProto").value = s ? s.protocolo : "SSH";
@@ -343,14 +362,14 @@ function abrirServ(id) {
   ajustaForm();
   $("mServ").className = "modal show";
 }
-$("btnAddServ").onclick = () => abrirServ(null);
-$("btnCancelServ").onclick = () => { $("mServ").className = "modal"; };
+$("btnAddServ").onclick = function () { abrirServ(null); };
+$("btnCancelServ").onclick = function () { $("mServ").className = "modal"; };
 
-$("btnSaveServ").onclick = () => {
-  const nome = $("fNome").value.trim(), end = $("fEnd").value.trim();
-  const porta = parseInt($("fPorta").value, 10), p = $("fProto").value;
+$("btnSaveServ").onclick = function () {
+  var nome = $("fNome").value.trim(), end = $("fEnd").value.trim();
+  var porta = parseInt($("fPorta").value, 10), p = $("fProto").value;
   if (!nome || !end || isNaN(porta)) { toast("Preencha nome, endereço e porta"); return; }
-  const o = { nome: nome, protocolo: p, endereco: end, porta: porta, usuario: "", senha: "", uuid: "" };
+  var o = { nome: nome, protocolo: p, endereco: end, porta: porta, usuario: "", senha: "", uuid: "" };
   if (p === "SSH") {
     o.usuario = $("fUser").value.trim(); o.senha = $("fPass").value;
     if (!o.usuario || !o.senha) { toast("Preencha usuário e senha"); return; }
@@ -362,9 +381,10 @@ $("btnSaveServ").onclick = () => {
     if (!o.uuid) { toast("Preencha o UUID"); return; }
   }
   if (editServ) {
-    const i = db.servidores.findIndex((x) => x.id === editServ);
-    o.id = editServ; o.extra = i >= 0 ? db.servidores[i].extra : null;
-    if (i >= 0) db.servidores[i] = o;
+    var idx = -1;
+    db.servidores.forEach(function (x, k) { if (x.id === editServ) idx = k; });
+    o.id = editServ; o.extra = idx >= 0 ? db.servidores[idx].extra : null;
+    if (idx >= 0) db.servidores[idx] = o;
   } else {
     o.id = uid(); o.extra = null; db.servidores.push(o); db.selServ = o.id;
   }
@@ -374,7 +394,7 @@ $("btnSaveServ").onclick = () => {
 
 function apagarServ(id) {
   if (ligado) { toast("Desligue a VPN antes"); return; }
-  db.servidores = db.servidores.filter((s) => s.id !== id);
+  db.servidores = db.servidores.filter(function (s) { return s.id !== id; });
   if (db.selServ === id) db.selServ = null;
   salvar(); atualizar();
 }
@@ -383,8 +403,145 @@ function apagarServ(id) {
 function abrirSni(id) {
   if (ligado) { toast("Desligue a VPN antes"); return; }
   editSni = id || null;
-  const n = id ? db.snis.find((x) => x.id === id) : null;
+  var n = id ? db.snis.filter(function (x) { return x.id === id; })[0] : null;
   $("mSniTitulo").textContent = n ? "Editar SNI" : "Adicionar SNI";
   $("sNome").value = n ? n.nome : "";
   $("sHost").value = n ? n.host : "";
-  $("mSni").class
+  $("mSni").className = "modal show";
+}
+$("btnAddSni").onclick = function () { abrirSni(null); };
+$("btnCancelSni").onclick = function () { $("mSni").className = "modal"; };
+$("btnSaveSni").onclick = function () {
+  var host = $("sHost").value.trim(), nome = $("sNome").value.trim() || host;
+  if (!host) { toast("Preencha o SNI"); return; }
+  if (editSni) {
+    var n = db.snis.filter(function (x) { return x.id === editSni; })[0];
+    if (n) { n.nome = nome; n.host = host; }
+  } else {
+    var novo = addSni(nome, host); db.selSni = novo.id;
+  }
+  salvar(); atualizar();
+  $("mSni").className = "modal"; toast("SNI salvo");
+};
+function apagarSni(id) {
+  if (ligado) { toast("Desligue a VPN antes"); return; }
+  db.snis = db.snis.filter(function (n) { return n.id !== id; });
+  if (db.selSni === id) db.selSni = null;
+  salvar(); atualizar();
+        }/* ---------- importar links ---------- */
+function dec(s) { try { return decodeURIComponent(s); } catch (e) { return s; } }
+function b64d(s) {
+  s = s.replace(/-/g, "+").replace(/_/g, "/");
+  while (s.length % 4) s += "=";
+  try { return decodeURIComponent(escape(atob(s))); } catch (e) { return atob(s); }
+}
+function parseLink(l) {
+  l = l.trim();
+  if (/^vmess:\/\//i.test(l)) {
+    var j = JSON.parse(b64d(l.slice(8)));
+    var tls = j.tls === "tls" || j.tls === true;
+    return {
+      srv: { nome: j.ps || j.add, protocolo: "VMess", endereco: j.add, porta: parseInt(j.port, 10), uuid: j.id || "",
+             extra: { net: j.net || "", path: j.path || "", host: j.host || "", tls: tls } },
+      sni: j.sni || (tls ? (j.host || "") : "")
+    };
+  }
+  var m = l.match(/^([a-z0-9]+):\/\/([^@]+)@(\[[^\]]+\]|[^:\/?#]+):(\d+)[^?#]*(?:\?([^#]*))?(?:#(.*))?$/i);
+  if (!m) return null;
+  var esq = m[1].toLowerCase(), auth = dec(m[2]), host = m[3].replace(/^\[|\]$/g, ""), porta = parseInt(m[4], 10);
+  var q = new URLSearchParams(m[5] || ""), nome = m[6] ? dec(m[6]) : host;
+  var sni = q.get("sni") || q.get("peer") || "";
+  var extra = { tipo: q.get("type") || "", seg: q.get("security") || "", path: q.get("path") || "", host: q.get("host") || "", flow: q.get("flow") || "" };
+  if (esq === "vless") return { srv: { nome: nome, protocolo: "VLESS", endereco: host, porta: porta, uuid: auth, extra: extra }, sni: sni };
+  if (esq === "trojan") return { srv: { nome: nome, protocolo: "Trojan", endereco: host, porta: porta, senha: auth, extra: extra }, sni: sni };
+  if (esq === "ssh") {
+    var i = auth.indexOf(":");
+    return { srv: { nome: nome, protocolo: "SSH", endereco: host, porta: porta,
+                    usuario: i < 0 ? auth : auth.slice(0, i), senha: i < 0 ? "" : auth.slice(i + 1) }, sni: sni };
+  }
+  return null;
+}
+
+$("btnImp").onclick = function () {
+  var t = $("impTxt").value.trim();
+  if (!t) { toast("Cole um link ou um backup"); return; }
+  var ok = 0, falha = 0;
+  if (t.charAt(0) === "{") {
+    try {
+      var j = JSON.parse(t);
+      (j.snis || []).forEach(function (x) { if (x && x.host) addSni(x.nome, x.host); });
+      (j.servidores || []).forEach(function (x) { if (addServ(x)) ok++; else falha++; });
+    } catch (e) { falha++; }
+  } else {
+    t.split(/\s+/).filter(Boolean).forEach(function (l) {
+      try {
+        var r = parseLink(l);
+        if (!r) { falha++; return; }
+        var s = addServ(r.srv);
+        if (!s) { falha++; return; }
+        if (r.sni) { var n = addSni(r.sni, r.sni); db.selSni = n.id; }
+        db.selServ = s.id; ok++;
+      } catch (e) { falha++; }
+    });
+  }
+  salvar(); atualizar();
+  $("impTxt").value = "";
+  var msg = ok + " importado(s)" + (falha ? ", " + falha + " com erro" : "");
+  toast(msg); log("Importação: " + msg);
+};
+
+/* ---------- exportar ---------- */
+$("btnExp").onclick = function () {
+  var c = JSON.parse(JSON.stringify({ versao: 1, servidores: db.servidores, snis: db.snis }));
+  if (!$("expSenha").checked) c.servidores.forEach(function (s) { s.senha = ""; s.uuid = ""; });
+  $("expTxt").value = JSON.stringify(c, null, 1);
+  toast("Backup gerado");
+};
+$("btnCopyExp").onclick = function () {
+  var t = $("expTxt");
+  if (!t.value) { toast("Gere o backup primeiro"); return; }
+  t.focus(); t.select(); t.setSelectionRange(0, t.value.length);
+  var ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+  toast(ok ? "Backup copiado" : "Selecione o texto e copie manualmente");
+};
+
+/* ---------- registros ---------- */
+$("btnClear").onclick = function () { logs = []; desenharLog(); };
+$("btnCopy").onclick = function () {
+  var t = document.createElement("textarea"); t.value = logs.join("\n"); document.body.appendChild(t);
+  t.select(); document.execCommand("copy"); document.body.removeChild(t); toast("Registros copiados");
+};
+
+/* ---------- VPN ---------- */
+function fmt(n) { return p2(Math.floor(n / 3600)) + ":" + p2(Math.floor(n % 3600 / 60)) + ":" + p2(n % 60); }
+function onVpnState(e) {
+  ligado = e;
+  $("stage").className = "stage" + (e ? " on" : "");
+  $("btnTxt").textContent = e ? "DESLIGAR" : "LIGAR";
+  $("pillTxt").textContent = e ? "Conectado" : "Desconectado";
+  $("pill").className = "pill" + (e ? " on" : "");
+  clearInterval(timer);
+  if (e) {
+    inicio = Date.now();
+    timer = setInterval(function () { $("tempo").textContent = fmt(Math.floor((Date.now() - inicio) / 1000)); }, 1000);
+    log("Túnel VPN ativo");
+  } else { $("tempo").textContent = "00:00:00"; log("Desconectado"); }
+  preencherSelects();
+}
+$("btn").onclick = function () {
+  if (ligado) { A.desligar(); return; }
+  var s = srvSel(), n = sniSel();
+  if (!s) { toast("Adicione um servidor primeiro"); return; }
+  log("Servidor: " + s.nome + " (" + s.protocolo + ")");
+  log(n ? "SNI: " + n.host : "Sem SNI");
+  log("Iniciando conexão...");
+  A.ligar(JSON.stringify(Object.assign({}, s, { sni: n ? n.host : "" })));
+};
+
+log("App iniciado");
+carregar();
+desenharLog();
+if (window.Android && A.estaLigado && A.estaLigado()) onVpnState(true);
+</script>
+</body>
+</html>
