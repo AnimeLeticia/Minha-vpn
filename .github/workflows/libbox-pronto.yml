@@ -1,0 +1,35 @@
+name: Libbox pronto
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Baixar libbox pronto
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release list -R singbox-android/libbox
+          gh release download 1.14.0 -R singbox-android/libbox -p "*.aar" -D aar
+          ls -la aar
+          sha256sum aar/*.aar
+      - name: Extrair API
+        run: |
+          cd aar
+          AAR=$(ls *.aar | head -n1)
+          unzip -o -q "$AAR" classes.jar
+          unzip -Z1 classes.jar | grep libbox/ > ../classes.txt
+          CL=$(grep -e PlatformInterface -e TunOptions -e libbox/Libbox -e BoxService -e SetupOptions -e CommandServer -e InterfaceUpdateListener -e NetworkInterface -e StringIterator -e RoutePrefix -e ConnectionOwner ../classes.txt | sed 's/.class$//' | tr / .)
+          javap -p -cp classes.jar $CL > ../api.txt
+          cat ../api.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libbox-api-pronto
+          path: |
+            api.txt
+            classes.txt
