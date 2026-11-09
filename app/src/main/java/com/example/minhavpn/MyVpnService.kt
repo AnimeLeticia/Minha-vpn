@@ -90,7 +90,7 @@ class MyVpnService : VpnService(), PlatformInterface, CommandServerHandler {
             val dados = JSONObject(json)
             val nomeServidor: String = dados.optString("nome")
 
-            // Se houver SNI no servidor SSH, o app abre um túnel TLS local
+            // Se houver SNI no servidor SSH, o app testa e abre um túnel TLS local
             val sni: String = dados.optString("sni").trim()
             if (sni.isNotEmpty() && dados.optString("protocolo") == "SSH") {
                 val t = TlsTunel(
@@ -99,6 +99,8 @@ class MyVpnService : VpnService(), PlatformInterface, CommandServerHandler {
                     dados.optInt("porta", 443),
                     sni
                 ) { m -> avisar("log", m) }
+                val erroTls: String? = t.testar()
+                if (erroTls != null) throw Exception(erroTls)
                 val portaLocal: Int = t.iniciar()
                 tls = t
                 avisar("log", "TLS ativo com SNI " + sni)
