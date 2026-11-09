@@ -47,6 +47,7 @@ class MyVpnService : VpnService(), PlatformInterface, CommandServerHandler {
     private var servidor: CommandServer? = null
     private var tunel: ParcelFileDescriptor? = null
     private var monitor: ConnectivityManager.NetworkCallback? = null
+    private var tls: TlsTunel? = null
     @Volatile private var ocupado: Boolean = false
 
     private fun avisar(tipo: String, msg: String) {
@@ -86,9 +87,23 @@ class MyVpnService : VpnService(), PlatformInterface, CommandServerHandler {
         ocupado = true
         try {
             val dados = JSONObject(json)
-            if (dados.optString("sni").isNotEmpty()) {
-                avisar("log", "SNI ignorado: o SSH direto não usa TLS")
+
+            // Se houver SNI no servidor SSH, o app abre um túnel TLS local
+            val sni: String = dados.optString("sni").trim()
+            if (sni.isNotEmpty() && dados.optString("protocolo") == "SSH") {
+                val t = TlsTunel(
+                    this,
+                    dados.optString("endereco").trim(),
+                    dados.optInt("porta", 443),
+                    sni
+                ) { m -> avisar("log", m) }
+                val portaLocal: Int = t.iniciar()
+                tls = t
+                avisar("log", "TLS ativo com SNI " + sni)
+                dados.put("endereco", "127.0.0.1")
+                dados.put("porta", portaLocal)
             }
+
             val cfg = ConfigBuilder.montar(dados, File(filesDir, "sb/work/box.log"))
             prepararLibbox()
             Libbox.checkConfig(cfg)
@@ -111,6 +126,8 @@ class MyVpnService : VpnService(), PlatformInterface, CommandServerHandler {
         try { servidor?.closeService() } catch (e: Throwable) { }
         try { servidor?.close() } catch (e: Throwable) { }
         servidor = null
+        try { tls?.parar() } catch (e: Throwable) { }
+        tls = null
         try { tunel?.close() } catch (e: Throwable) { }
         tunel = null
         pararMonitor()
