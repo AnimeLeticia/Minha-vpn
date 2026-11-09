@@ -48,6 +48,7 @@ class MyVpnService : VpnService(), PlatformInterface, CommandServerHandler {
     private var tunel: ParcelFileDescriptor? = null
     private var monitor: ConnectivityManager.NetworkCallback? = null
     private var tls: TlsTunel? = null
+    private val notif: NotificacaoVpn by lazy { NotificacaoVpn(this) }
     @Volatile private var ocupado: Boolean = false
 
     private fun avisar(tipo: String, msg: String) {
@@ -87,6 +88,7 @@ class MyVpnService : VpnService(), PlatformInterface, CommandServerHandler {
         ocupado = true
         try {
             val dados = JSONObject(json)
+            val nomeServidor: String = dados.optString("nome")
 
             // Se houver SNI no servidor SSH, o app abre um túnel TLS local
             val sni: String = dados.optString("sni").trim()
@@ -112,6 +114,7 @@ class MyVpnService : VpnService(), PlatformInterface, CommandServerHandler {
             s.start()
             s.startOrReloadService(cfg, OverrideOptions())
             ativo = true
+            notif.iniciar(nomeServidor)
             avisar("on", "")
         } catch (e: Throwable) {
             val m: String = e.message ?: e.toString()
@@ -132,6 +135,7 @@ class MyVpnService : VpnService(), PlatformInterface, CommandServerHandler {
         tunel = null
         pararMonitor()
         ativo = false
+        try { notif.parar() } catch (e: Throwable) { }
     }
 
     private fun parar() {
@@ -186,7 +190,7 @@ class MyVpnService : VpnService(), PlatformInterface, CommandServerHandler {
             throw Exception("Permissão de VPN ausente ou revogada")
         }
         val b = Builder()
-        b.setSession("Cipher VPN")
+        b.setSession("CIPHER VPN")
         b.setMtu(options.getMTU())
 
         var temV4 = false
